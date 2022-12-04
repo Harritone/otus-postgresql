@@ -1,4 +1,4 @@
-# Домашнее задание по теме Установка и настройка PostgteSQL в контейнере Docker
+# Домашнее задание по теме Физический уровень PostgteSQL
 
 ## Инструкция по запуску PostgreSQL в докер-контейнере:
 
@@ -19,18 +19,25 @@
 1. Выполнил инструкции описанные выше.
 2. Создал таблицу `persons`. Заполнил её данными.
 3. Выполнил `docker-compose down && docker container prune && docker image prune`
-4. Проверил что контейнер не равёрнут `docker ps`
-5. Выполнил `docker-compose up -d`
-6. Выполнил `docker-compose run --rm pg_client`
-7. Выполнил:
-  ```sql
-    SELECT * FROM persons;
-   id | first_name | second_name
-  ----+------------+-------------
-    6 | ivan       | ivanov
-    7 | petr       | petrov
-    8 | sergey     | sergeev
-    7 | oksy       | petrova
-  (4 rows)
+4. Проверил что контейнер не развёрнут `docker ps`
+5. Изменил `docker-compose.yml`, переименовал подмонтированную папку из `pg_data` в `pg_data_1`
+6. Выполнил `docker-compose up -d`
+7. Запустил клиента `docker-compose run --rm pg_client`
+8. Удовстоверился что таблицы `persons` нет.
+  ```psql
+    otusdb=# \d
+    Did not find any relations.
   ```
-  > Данные остались, потому что подмонтирован volume на диске где хранятся данные.
+9. Остановил контейнер.
+10. Перенёс содержимое `pg_data` в `pg_data_1`
+11. Развернул контейнер.
+12. Запустил клиент.
+13. Удостоверился что данные на месте:
+  ```psql
+    otusdb=# \dt
+              List of relations
+    Schema |  Name   | Type  |  Owner
+    --------+---------+-------+----------
+    public | persons | table | postgres
+    (1 row)
+  ```
